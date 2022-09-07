@@ -45,9 +45,11 @@ def lsq_weighted(X, y, d):
     np.fill_diagonal(weights, d)
 
     # create (X^T.W.X)^-1
-    Xt_W_X_inv = np.linalg.pinv(X.T @ weights @ X)
+    Xt_W_X_inv = np.linalg.pinv(X.T.dot(weights).dot(X))
+
     # create (X^T.W.y)
-    Xt_W_y = X.T @ weights @ y
+    Xt_W_y = X.T.dot(weights).dot(y)
+    
     # calculate the coefficients
     beta = np.dot(Xt_W_X_inv,Xt_W_y)
 
