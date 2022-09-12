@@ -1,34 +1,24 @@
 from scipy.spatial.distance import cdist
 import numpy as np
 
-from scipy.spatial.distance import cdist
-import numpy as np
-
 class KnnBase(object):
     def __init__(self, train_data, train_targets):
-        self.train_data = self.normalise_dataset(train_data)
+        self.feature_means = np.mean(train_data,axis=0)
+        self.feature_stds  = np.std(train_data,axis=0)
+        self.norm_train_data = (train_data - self.feature_means) / self.feature_stds
         self.targets = train_targets
 
-
-    def normalise_dataset(self, dataset):
-        def normalise(feature):
-            mean = np.mean(feature)
-            std  = np.std(feature)
-            return (feature - mean) / std
-        
-        return np.apply_along_axis(normalise, axis=0, arr=dataset)
-
-
     def get_k_nearest_targets(self, new_data, k):
-        # For each data point calculate Euclidean distance to all other points
-        transformed_data = self.normalise_dataset(new_data)
-        distances = cdist(transformed_data, self.train_data)
+        # Transform each new data point using the feature mean & std
+        #   from the train data, and calculate Euclidean distance to
+        #   all training data points.
+        transformed_data = (new_data-self.feature_means)/self.feature_stds
+        distances = cdist(transformed_data, self.norm_train_data)
         
         # Take k nearest points, get their target values
-        k_nearest_indices = np.argsort(distances, axis=0)[:,:k]
-        k_nearest_classes = self.targets[k_nearest_indices]
-
-        # Take most common target value for each point and return that value
+        indices = np.argpartition(distances, k) #find indices of k nearest neighbours
+        k_nearest_classes = self.targets[indices[:,:k]] #find results of k nearest neighbours
+        
         return k_nearest_classes
 
 
