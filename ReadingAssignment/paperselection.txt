@@ -1,0 +1,12 @@
+
+Jojanne: 
+Steiert B, Timmer J, Kreutz C. L1 regularization facilitates detection of cell type-specific parameters in dynamical systems. Bioinformatics. 2016 Sep 1;32(17):i718-i726. doi: 10.1093/bioinformatics/btw461. PMID: 27587694; PMCID: PMC5013918.
+
+Stijn:
+Stringer, C., Wang, T., Michaelos, M. et al. Cellpose: a generalist algorithm for cellular segmentation. Nat Methods 18, 100–106 (2021). https://doi.org/10.1038/s41592-020-01018-x
+
+Bas:
+S. Pereira, A. Pinto, V. Alves and C. A. Silva, "Brain Tumor Segmentation Using Convolutional Neural Networks in MRI Images," in IEEE Transactions on Medical Imaging, vol. 35, no. 5, pp. 1240-1251, May 2016, doi: 10.1109/TMI.2016.2538465.
+
+Mariana:
+M. Li et al., "DeepDSC: A Deep Learning Method to Predict Drug Sensitivity of Cancer Cell Lines," in IEEE/ACM Transactions on Computational Biology and Bioinformatics, vol. 18, no. 2, pp. 575-582, 1 March-April 2021, doi: 10.1109/TCBB.2019.2919581.
