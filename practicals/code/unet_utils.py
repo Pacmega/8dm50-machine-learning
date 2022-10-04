@@ -4,7 +4,9 @@ from sklearn.feature_extraction.image import extract_patches_2d
 import gryds
 import time
 import matplotlib.pyplot as plt
-
+from keras.preprocessing.image import ImageDataGenerator
+import gryds
+import tensorflow as tf
 
 def load_data(impaths_all, test=False):
     """
@@ -103,6 +105,11 @@ def extract_patches(images, segmentations, patch_size, patches_per_im, seed):
     return x, y
 
 
+
+
+
+
+
 # Create a very simple datagenerator
 def datagenerator(images, segmentations, patch_size, patches_per_im, batch_size):
     """
@@ -131,3 +138,166 @@ def datagenerator(images, segmentations, patch_size, patches_per_im, batch_size)
             y_batch = y[idx * batch_size:(idx + 1) * batch_size]
             yield x_batch, y_batch
 
+            
+def bsplinetransform(batch_patches,mask_patches,bounds=[-0.1,0.1]):
+    
+    tr_im = np.zeros(batch_patches.shape)
+    tr_seg = np.zeros(mask_patches.shape)
+    
+    for idx, (im, seg) in enumerate(zip(batch_patches, mask_patches)):
+        
+        disp_i, disp_j = random_disp([3,3],bounds)
+        bspline_transformation = gryds.BSplineTransformation([disp_i, disp_j])
+        
+        image_interpolator = gryds.MultiChannelInterpolator(im,order=0)
+        tr_im[idx] = image_interpolator.transform(bspline_transformation)
+
+        mask_interpolator = gryds.Interpolator(seg[:,:,0],order=0)
+        tr_seg[idx] = np.expand_dims(mask_interpolator.transform(bspline_transformation),axis=-1)
+        
+    return tr_im, tr_seg
+
+def random_disp(shape,bounds):
+
+    disp_i = np.random.rand(shape[0],shape[1]) * (bounds[1] - bounds[0]) + bounds[0]
+    disp_j = np.random.rand(shape[0],shape[1]) * (bounds[1] - bounds[0]) + bounds[0]
+    
+    return disp_i, disp_j     
+
+
+def extract_patches_randBA(images, segmentations, patch_size, patches_per_im, RBArange, seed):
+    """
+    Extract patches from images with random brightness augmentation
+
+    :param images: Input images
+    :param segmentations: Corresponding segmentations
+    :param patch_size: Desired patch size
+    :param patches_per_im: Amount of patches to extract per image
+    :param RBArange: Range for random brightness augmentation 
+    :param seed: Random seed to ensure matching patches between image and segmentation
+    :return: x: numpy array of patches and y: numpy array of patches segmentations
+    """
+    # The total amount of patches that will be obtained
+    inp_size = len(images) * patches_per_im
+    # Allocate memory for the patches and segmentations of the patches
+    x = np.zeros((inp_size, patch_size[0], patch_size[1], images.shape[-1]))
+    y = np.zeros((inp_size, patch_size[0], patch_size[1], segmentations.shape[-1]))
+
+    # Loop over all the images (and corresponding segmentations) and extract random patches 
+    # using the extract_patches_2d function of scikit learn
+    for idx, (im, seg) in enumerate(zip(images, segmentations)):
+        # Note the random seed to ensure the corresponding segmentation is extracted for each patch
+        batch_patches = extract_patches_2d(im, patch_size, max_patches=patches_per_im,random_state=seed)
+
+        batchadj = adjustbrightnessImages(batch_patches,RBArange)
+            # create datagenerator to transform intensity
+            
+        x[idx * patches_per_im:(idx + 1) * patches_per_im] = batchadj
+        y[idx * patches_per_im:(idx + 1) * patches_per_im] = np.expand_dims(
+                extract_patches_2d(seg, patch_size, max_patches=patches_per_im, random_state=seed),
+                axis=-1)
+
+    return x, y
+
+def adjustbrightnessImages(batch,bounds):
+    
+    BAimages = np.zeros(batch.shape)
+    for i in range(batch.shape[0] ):
+        randfloat = np.random.rand() * (bounds[1] - bounds[0]) + bounds[0]
+        im = tf.image.adjust_brightness(batch[i], delta=randfloat)
+        BAimages[i] = im
+        
+    return BAimages
+
+def extract_patches_randBA_spline(images, segmentations, patch_size, patches_per_im, RBArange, splinebounds, seed):
+    
+    inp_size = len(images) * patches_per_im
+    # Allocate memory for the patches and segmentations of the patches
+    x = np.zeros((inp_size, patch_size[0], patch_size[1], images.shape[-1]))
+    y = np.zeros((inp_size, patch_size[0], patch_size[1], segmentations.shape[-1]))
+
+
+    # Loop over all the images (and corresponding segmentations) and extract random patches 
+    # using the extract_patches_2d function of scikit learn
+    for idx, (im, seg) in enumerate(zip(images, segmentations)):
+        
+        # Note the random seed to ensure the corresponding segmentation is extracted for each patch
+        batch_patches = extract_patches_2d(im, patch_size,max_patches=patches_per_im,random_state=seed)
+        
+        batchadj = adjustbrightnessImages(batch_patches,RBArange)
+
+        
+        mask_patches = np.expand_dims(extract_patches_2d(seg, patch_size, max_patches=patches_per_im, random_state=seed),
+            axis=-1)
+        
+        im_trans, seg_trans= bsplinetransform(batchadj,mask_patches,bounds=splinebounds)
+        
+        x[idx * patches_per_im:(idx + 1) * patches_per_im] = datagen.flow(im_trans,batch_size=patches_per_im)[0]    
+        y[idx * patches_per_im:(idx + 1) * patches_per_im] = seg_trans
+
+    return x,y
+
+
+
+
+            
+# Create a very simple datagenerator
+def datagenerator_randBA(images, segmentations, patch_size, patches_per_im, brange, batch_size):
+    """
+    Simple data-generator to feed patches in batches to the network.
+    To extract different patches each epoch, steps_per_epoch in fit_generator should be equal to nr_batches.
+
+    :param images: Input images
+    :param segmentations: Corresponding segmentations
+    :param patch_size: Desired patch size
+    :param patches_per_im: Amount of patches to extract per image
+    :param RBArange: Range for random brightness augmentation 
+    :param batch_size: Number of patches per batch
+    :return: Batch of patches to feed to the model
+    """
+    # Total number of patches generated per epoch
+    total_patches = len(images) * patches_per_im
+    # Amount of batches in one epoch
+    nr_batches = int(np.ceil(total_patches / batch_size))
+
+    while True:
+        # Each epoch extract different patches from the training images
+        x, y = extract_patches_randBA(images, segmentations, patch_size, patches_per_im, brange, seed=np.random.randint(0, 500))
+
+        # Feed data in batches to the network
+        for idx in range(nr_batches):
+            x_batch = x[idx * batch_size:(idx + 1) * batch_size]
+            y_batch = y[idx * batch_size:(idx + 1) * batch_size]
+            yield x_batch, y_batch
+
+            
+            
+def datagenerator_randBA_spline(images, segmentations, patch_size, patches_per_im, RBArange, splinebounds, batch_size):
+    """
+    Simple data-generator to feed patches in batches to the network.
+    To extract different patches each epoch, steps_per_epoch in fit_generator should be equal to nr_batches.
+
+    :param images: Input images
+    :param segmentations: Corresponding segmentations
+    :param patch_size: Desired patch size
+    :param patches_per_im: Amount of patches to extract per image
+    :param brange: Range for random brightness augmentation 
+    :param splinebounds: Bounds for spline tranformation
+    :param batch_size: Number of patches per batch
+    :return: Batch of patches to feed to the model
+    """
+    # Total number of patches generated per epoch
+    total_patches = len(images) * patches_per_im
+    # Amount of batches in one epoch
+    nr_batches = int(np.ceil(total_patches / batch_size))
+
+    while True:
+        # Each epoch extract different patches from the training images
+        x, y = extract_patches_randBA_spline(images, segmentations, patch_size, patches_per_im, RBArange, splinebounds, 
+                                    seed=np.random.randint(0, 500))
+
+        # Feed data in batches to the network
+        for idx in range(nr_batches):
+            x_batch = x[idx * batch_size:(idx + 1) * batch_size]
+            y_batch = y[idx * batch_size:(idx + 1) * batch_size]
+            yield x_batch, y_batch
