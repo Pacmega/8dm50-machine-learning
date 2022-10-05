@@ -3,16 +3,19 @@
 The course covers a number of machine learning methods and concepts, including state-of-the-art deep learning methods, with example applications in the medical imaging and computational biology domains.
 
 ## Use of Canvas
-This GitHub page contains all the general information about the course and the study materials. The [Canvas page of the course](https://canvas.tue.nl/courses/21391) will be used only for sharing of course information that cannot be made public (e.g. Microsoft Teams links), submission of the practical work and posting questions to the instructors and teaching assistants (in the Discussion section). The students are highly encouraged to use the Discussion section in Canvas. All general questions (e.g. issues with setting up the programming environment, error messages etc., general methodology questions) should be posted in the Discussion section.
+This GitHub page contains all the general information about the course and the study materials. The [Canvas page of the course](https://canvas.tue.nl/courses/17912) will be used only for sharing of course information that cannot be made public (e.g. Microsoft Teams links), submission of the practical work and posting questions to the instructors and teaching assistants (in the Discussion section). The students are highly encouraged to use the Discussion section in Canvas. All general questions (e.g. issues with setting up the programming environment, error messages etc., general methodology questions) should be posted in the Discussion section.
 
 TLDR: GitHub is for content, Canvas for communication and submission of assignments.
 
 ## Schedule
 
 The course schedule is as follows:
-* **Lectures**, *general time*: Wednesdays 08:45 - 10:45
-  * There is one exception: there is **additional** lecture on September 12 (Monday) and **no** lecture on September 21 (Wednesday).
-* **Guided self-study**, *time*: Wednesdays 10.45 - 12.45
+* **Lectures**, *time*: Wednesdays 08:45 - 10:45, *location*: Auditorium 10
+* **Guided self-study**, *time*: Wednesdays 10.45 - 12.45, *location*: Atlas -1.210
+
+If you are absent because you are ill or awaiting test results, you can view lecture recordings from the previous edition of the course with largely the same content. In addition, an online session with a teaching assistant that can help you with the practical assignments will be scheduled. Details will be provided on Canvas.
+
+TLDR: Lectures will be on-campus, there are on-online alternatives in case you have to be absent.
 
 ## Practical work
 
@@ -49,34 +52,43 @@ If you lack prior knowledge of the Python programming language, you can use the 
 
 ## Lectures and assignments
 
-**IMPORTANT: The course is lightly restructured from the 2021 edition. However, the materials (lectrue slides and practical work assignments) will largely be unchanged. Links to the updated materials will be added to the table below as the course progresses. If you want a sneak peek, the materials from the 2021 edition of the course are available [here](legacy/2021).
+**IMPORTANT: All materials tagged with (*tentative*)  are not updated from the previous edition of the course and might change for this edition. However, any changes made will not be substantial and you can still use the materials to get an early peek at the content.**
 
+* [Introduction slides](lectures/intro.pdf)
 
-### Lectures
+### Reading assignment
+* [Instructions](reading_assignment.md)
 
-| # | Date | Title | Slides |
-| --- | --- | --- | --- |
-| 1 | 07/Sep | Machine learning fundamentals | [intro](lectures/intro.pdf), [slides](lectures/week_1.pdf), [extended](lectures/week_1_extended.pdf) |
-| 2 | 12/Sep (:exclamation:) | Linear models | [slides](lectures/week_2_linear_models.pdf) |
-| 3 | 14/Sep | Support vector machines, random forests | [slides](lectures/week_2_classification.pdf) | 
-| 4 | 28/Sep | Deep learning I | *TBA* |
-| 5 | 05/Oct | Deep learning II | *TBA* |
-| 6 | 12/Oct | Unsupervised machine learning | *TBA* |
-| 7 |  19/Oct | Transformers | *TBA* |
-| 8 | 26/Oct | (*Guest lecture*) Explainable AI by Francesca Grisoni, not included in the exam 👍 | *TBA* |
-| :small_red_triangle:| 02/Nov | *Exam* | [Example exam](exam.pdf) |
+### Machine learning fundamentals I
+* [Lecture slides](lectures/week_1.pdf)
+* [Practical work](practicals/week_1.ipynb)
 
-### Practical assignments
+### Machine learning fundamentals II
+* [Lecture slides](lectures/week_2.pdf)
+* [Practical work](practicals/week_2.ipynb)
 
-| # | Date | Title | Slides |
-| --- | --- | --- | --- |
-| 1 | 07/Sep | Machine learning fundamentals I| [exercises](practicals/week_1.ipynb) |
-| 1 | 14/Sep | Machine learning fundamentals II| *TBA* |
-| 3 | 21/Sep | Linear models | *TBA* |
-| 4 | 28/Sep | Support vector machines, random forests | *TBA* |
-| 5 | 05/Oct | Deep learning I | *TBA* |
-| 6 | 12/Oct | Deep learning II  | *TBA* |
-| 7 |  19/Oct | *Catch up week!* :tomato:  | - |
+### Linear models
+* [Lecture slides](lectures/week_3.pdf)
+* [Practical work](practicals/week_3.ipynb)
+
+### Deep learning I
+* [Lecture slides](lectures/week_4.pdf)
+* [Practical work](practicals/week_4.ipynb)
+
+### Deep learning II
+* Lecture slides [part 1](lectures/week_5.pdf) and [part 2](lectures/week_5_guest.pdf)
+* [Practical work](https://colab.research.google.com/drive/1zLIAaGX8Z53YD8iR2FLNl8D-CXaQBTX-) @ Google Colab
+
+### Support vector machines, random forests
+* [Lecture slides](lectures/week_6_lecture.pdf)
+* [Practical work](practicals/week_6.ipynb)
+
+### Unsupervised machine learning
+* [Lecture slides](lectures/week_7_lecture.pdf)
+* *There will be no practical work for this topic.*
+
+### Explainable AI
+* [Guest lecture by Francesca Grisoni](lectures/FGrisoni_2021_XAI.pdf)
 
 # Other course information
 
@@ -116,9 +128,10 @@ Course instructors:
 * Federica Eduati
 
 Teaching assistants:
+* Sina Amirrajab
 * Oscar Lapuente Santana
-* Rens ter Maat
-* Hassan Keshvarikhojasteh
+* Yasmina Al Khalil
+
 
 ## Recommended prerequisite courses
 
