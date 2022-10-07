@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def make_plot(model,X_train, Y_train):# create plot
     fig, ax = plt.subplots()
